@@ -20,6 +20,16 @@ public class GameController : MonoBehaviour {
 	public GameObject player;
 
 	/// <summary>
+	/// The ball prefab.
+	/// </summary>
+	public GameObject ballPrefab;
+
+	/// <summary>
+	/// The ball count.
+	/// </summary>
+	public int ballCount;
+
+	/// <summary>
 	/// The rows.
 	/// </summary>
 	public int rows;
@@ -28,6 +38,11 @@ public class GameController : MonoBehaviour {
 	/// The columns.
 	/// </summary>
 	public int columns;
+
+	/// <summary>
+	/// The score label.
+	/// </summary>
+	public UnityEngine.UI.Text scoreLabel;
 
 	private Vector3 startPoint;
 
@@ -53,8 +68,26 @@ public class GameController : MonoBehaviour {
 
 		// Unity-chanを配置
 		player.transform.position = startPoint + new Vector3(width/2, 0, width/2);
+
+		// ボールを配置
+		var list = Utility.Shuffle(rooms);
+		int count = 0;
+		foreach (var room in list) {
+			Debug.Log (room.roomNo);
+			if (this.PutBall (room)) {
+				count++;
+				if (count > ballCount) {
+					// ボール配置完了
+					break;
+				}
+			}
+		}
 	}
 
+	/// <summary>
+	/// Puts the wall.
+	/// </summary>
+	/// <param name="wall">Wall.</param>
 	void PutWall(Wall wall) {
 		if (wall != null && !wall.isBroken) {
 			// 位置
@@ -71,9 +104,32 @@ public class GameController : MonoBehaviour {
 			Instantiate (wallPrefab, position, q);
 		}
 	}
+
+	/// <summary>
+	/// Puts the ball.
+	/// </summary>
+	/// <returns><c>true</c>, if ball was put, <c>false</c> otherwise.</returns>
+	/// <param name="room">Room.</param>
+	bool PutBall(Room room) {
+		if (room.row == 0 && room.col == 0) {
+			// playerと同じ座標なのでキャンセル
+			return false;
+		}
+		// 部屋の中心
+		float width = wallPrefab.transform.localScale.z;
+		Vector3 position = new Vector3 (room.col * width + (width / 2), 0.7f, room.row * width + (width / 2)) + startPoint;
+
+		Debug.Log (string.Format("Ball Position = {0}", position));
+
+		// ballの配置
+		Instantiate(ballPrefab, position, Quaternion.identity);
+
+		return true;
+	}
 	
 	// Update is called once per frame
 	void Update () {
-		
+		int count = GameObject.FindGameObjectsWithTag ("Ball").Length;
+		scoreLabel.text = count.ToString ();
 	}
 }

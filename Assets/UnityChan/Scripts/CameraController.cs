@@ -15,6 +15,7 @@
 
 using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 namespace CameraController
 {
@@ -79,6 +80,11 @@ namespace CameraController
 
 		void mouseEvent()
 		{
+			// ボタン操作時は無視
+			if (EventSystem.current.IsPointerOverGameObject ()) {
+				return;
+			}
+
 			float delta = Input.GetAxis("Mouse ScrollWheel");
 			if (delta != 0.0f)
 				this.mouseWheelEvent(delta);
