@@ -8,10 +8,16 @@ public class GameController : MonoBehaviour {
 	/// The ground.
 	/// </summary>
 	public GameObject ground;
+
 	/// <summary>
 	/// The wall prefab.
 	/// </summary>
 	public GameObject wallPrefab;
+
+	/// <summary>
+	/// The player.
+	/// </summary>
+	public GameObject player;
 
 	/// <summary>
 	/// The rows.
@@ -44,6 +50,9 @@ public class GameController : MonoBehaviour {
 			PutWall (room.right);
 			PutWall (room.bottom);
 		}
+
+		// Unity-chanを配置
+		player.transform.position = startPoint + new Vector3(width/2, 0, width/2);
 	}
 
 	void PutWall(Wall wall) {
